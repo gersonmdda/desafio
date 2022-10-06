@@ -1,0 +1,87 @@
+README
+
+## DOCKER
+
+Inicialmente é necessário ter o docker instalado.
+
+## GitHub
+
+Uma vez com o docker, efetuar o clone do projeto através do GitHub
+
+$ git clone git@github.com:gersonmdda/desafio.git
+
+## Execução
+
+Uma vez com o projeto clonado
+
+pelo terminal, entrar na pasta raiz do projeto 
+
+para subir uma imagem do docker rodar o comando
+
+$ docker-compose up --build
+
+
+## Entrar na imagem do projeto
+
+Executar o comando 
+
+$ docker ps
+
+Verificar a imagem com o nome desafio/laravel-app
+
+Copiar o CONTAINER ID
+
+rodar o comando 
+
+$ docker exec -it <container id> bash
+
+Exemplo:
+CONTAINER ID   IMAGE                 COMMAND                  CREATED              STATUS              PORTS                                                  NAMES
+0e71c1761d8e   desafio/laravel-app   "docker-php-entrypoi…"   About a minute ago   Up About a minute   9000/tcp                                               desafio-laravel
+
+
+$ docker exec -it 0e71c1761d8e bash
+
+
+## Importando vendor
+
+Para buscar todos os arquivos necessários executar comando dentro da imagem 
+
+# composer install
+
+
+## Migrações
+
+Para criar o banco de dados, e importar primeiros dados, rodar comando dentro da imagem
+
+# php artisan migrate --seed
+
+## Chamar API
+
+Fazer requisição GET na url (Postman ou similares)
+
+http://localhost:8989/api/get-ranking
+
+passando o json no Body
+{
+    "movement": 1
+}
+
+OBS: Talvez seja necessário liberar permissões da pastas /var/www/storage/logs/ e /var/www/storage/framework/cache/data/
+
+Exemplo:
+chmod 777 -R /var/www/storage/logs/
+chmod 777 -R /var/www/storage/framework/cache/data/
+
+##Testes 
+Antes de iniciar os testes é necessário criar um schema chamado "testing" no banco de dados
+para isso basta acessar o banco (pelo Workbench ou similar)
+usando host 127.0.0.1
+       port 3388
+       password: "password" 
+
+para rodar os testes rodar dentro da imagem o comando
+# ./vendor/bin/phpunit
+
+
+
