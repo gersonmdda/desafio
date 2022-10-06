@@ -53,7 +53,7 @@ services:
 
     # redis
     redis:
-        container_name: especializati-redis
+        container_name: desafio-redis
         image: redis:latest
         networks: 
             - laravel
