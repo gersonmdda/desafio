@@ -15,46 +15,58 @@ class RankingTest extends TestCase
      *
      * @return void
      */
-    public function test_example()
+    public function test_ranking()
     {
         Artisan::call('db:seed');
         $this->movementOne(1);
         $this->movementTwo(2);
         $this->movementThree(3);
-
+        $this->movementFour(4);
+        $this->notInt('test');
+        
     }
    
 
-    public function movementOne(int $one =1)
+    public function movementOne(int $one = 1)
     {
         
         $response = $this->json('GET','/api/get-ranking',['movement'=>$one]);
+
     
-        
         $response
             ->assertStatus(200)
             ->assertJson(['status' => true])
-            ->assertJsonPath('response.0.name', 'Jose')
-            ->assertJsonPath('response.0.position', 1)
-            ->assertJsonPath('response.1.name', 'Joao')
-            ->assertJsonPath('response.1.position', 2)
-            ->assertJsonPath('response.2.name', 'Paulo')
-            ->assertJsonPath('response.2.position', 3);
+            ->assertJsonPath('response.movement', 'Deadlift')
+            ->assertJsonPath('response.ranking.0.user_name', 'Jose')
+            ->assertJsonPath('response.ranking.0.position', 1)
+            ->assertJsonPath('response.ranking.0.date', "2021-01-06 00:00:00")
+            ->assertJsonPath('response.ranking.1.user_name', 'Joao')
+            ->assertJsonPath('response.ranking.1.position', 2)
+            ->assertJsonPath('response.ranking.1.date', "2021-01-02 00:00:00")
+            ->assertJsonPath('response.ranking.2.user_name', 'Paulo')
+            ->assertJsonPath('response.ranking.2.position', 3)
+            ->assertJsonPath('response.ranking.2.date', "2021-01-01 00:00:00");
     }
 
     public function movementTwo(int $two = 2)
     {
         $response = $this->json('GET','/api/get-ranking',['movement'=>$two]);
+
+       
         
         $response
             ->assertStatus(200)
             ->assertJson(['status' => true])
-            ->assertJsonPath('response.0.name', 'Joao')
-            ->assertJsonPath('response.0.position', 1)
-            ->assertJsonPath('response.1.name', 'Jose')
-            ->assertJsonPath('response.1.position', 1)
-            ->assertJsonPath('response.2.name', 'Paulo')
-            ->assertJsonPath('response.2.position', 2);
+            ->assertJsonPath('response.movement', 'Back Squat')
+            ->assertJsonPath('response.ranking.0.user_name', 'Joao')
+            ->assertJsonPath('response.ranking.0.position', 1)
+            ->assertJsonPath('response.ranking.0.date', "2021-01-03 00:00:00")
+            ->assertJsonPath('response.ranking.1.user_name', 'Jose')
+            ->assertJsonPath('response.ranking.1.position', 1)
+            ->assertJsonPath('response.ranking.1.date', "2021-01-03 00:00:00")
+            ->assertJsonPath('response.ranking.2.user_name', 'Paulo')
+            ->assertJsonPath('response.ranking.2.position', 2)
+            ->assertJsonPath('response.ranking.2.date', "2021-01-03 00:00:00");
 
       
     }
@@ -66,9 +78,31 @@ class RankingTest extends TestCase
         $response
         ->assertStatus(200)
         ->assertJson([
-            'status' => true,
-            "response"=> []
+            'status' => true
+        ])->assertJsonPath('response.movement','Bench Press')
+        ->assertJsonPath('response.ranking',[]);
+
+    }
+
+    public function movementFour(int $four = 4)
+    {
+        $response = $this->json('GET','/api/get-ranking',['movement'=>$four]);
+        $response
+        ->assertStatus(400)
+        ->assertJson([
+            'status' => false,
+            'error' => "movimento não encontrado"
         ]);
 
     }
+
+    public function notInt(string $notInt = 'a')
+    {
+        $response = $this->json('GET','/api/get-ranking',['movement'=>$notInt]);
+
+        $response
+        ->assertStatus(500);
+
+    }
+
 }
